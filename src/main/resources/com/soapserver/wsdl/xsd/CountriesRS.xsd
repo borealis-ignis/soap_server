@@ -1,0 +1,40 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ent="http://soapserver.com/entities"
+	targetNamespace="http://soapserver.com/entities"
+	elementFormDefault="qualified">
+
+	<xs:element name="CountryResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Country" type="ent:CountryType" minOccurs="1" maxOccurs="99" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="CountryType">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string" />
+			<xs:element name="Cities" type="ent:CitiesType" />
+			<xs:element name="Currency" type="ent:CurrencyType" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="CitiesType">
+		<xs:sequence>
+			<xs:element name="City" minOccurs="1" maxOccurs="99">
+				<xs:complexType>
+					<xs:attribute name="Name" type="xs:string" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="CurrencyType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GBP" />
+			<xs:enumeration value="EUR" />
+			<xs:enumeration value="PLN" />
+			<xs:enumeration value="BYN" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

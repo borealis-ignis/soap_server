@@ -1,0 +1,45 @@
+<wsdl:definitions
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	targetNamespace="http://soapserver.com/entities"
+	xmlns:tns="http://soapserver.com/entities">
+	
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://soapserver.com/entities" schemaLocation="xsd/CountriesRQ.xsd"/>
+			<xsd:import namespace="http://soapserver.com/entities" schemaLocation="xsd/CountriesRS.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	 
+	<wsdl:message name="CountryRequest">
+		<wsdl:part element="tns:CountryRequest" name="CountryRequest" />
+	</wsdl:message>
+	<wsdl:message name="CountryResponse">
+		<wsdl:part element="tns:CountryResponse" name="CountryResponse" />
+	</wsdl:message>
+	
+	<wsdl:portType name="CountriesPort">
+		<wsdl:operation name="processCountryRequest">
+			<wsdl:input message="tns:CountryRequest" name="CountryRequest" />
+			<wsdl:output message="tns:CountryResponse" name="CountryResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	
+	<wsdl:binding name="CountriesPortSoap11" type="tns:CountriesPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="processCountryRequest">
+			<soap:operation soapAction="" />
+			<wsdl:input name="CountryRequest">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="CountryResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CountriesPortService">
+		<wsdl:port binding="tns:CountriesPortSoap11" name="CountriesPortSoap11">
+			<soap:address location="http://localhost:8080/ws" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

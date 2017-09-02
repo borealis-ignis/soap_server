@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<import resource="db-context.xml"/>
+	
+	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="ignoreResourceNotFound" value="true"/>
+	</bean>
+	
+	<bean name="service" class="org.springframework.ws.wsdl.wsdl11.SimpleWsdl11Definition">
+		<property name="wsdl" value="classpath:/com/soapserver/wsdl/service.wsdl"/>
+	</bean>
+	
+	<bean class="com.soapserver.core.processors.impl.CountriesProcessor">
+		<property name="xsl" value="countries.xsl"/>
+		<property name="abstractDAO" ref="service.XmlAbstractDAO"/>
+		<property name="preFilters">
+			<list>
+				<bean class="com.soapserver.core.filters.impl.CheckCountryFilter">
+					<property name="countriesDAO" ref="service.CountriesDAO"/>
+				</bean>
+			</list>
+		</property>
+		<property name="postFilters">
+			<list>
+				<bean class="com.soapserver.core.filters.impl.GroupCitiesFilter"/>
+			</list>
+		</property>
+	</bean>
+	
+</beans>
