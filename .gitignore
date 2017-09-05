@@ -1,2 +1,5 @@
 /target/
 /bin/
+/src/main/java/com/soapserver/entities/
+.classpath
+.settings
