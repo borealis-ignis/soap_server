@@ -28,4 +28,8 @@
 	
 	<bean id="service.CountriesDAO" class="com.soapserver.core.dao.impl.CountriesDAOImpl" parent="jdbcExt"/>
 	
+	<bean class="com.soapserver.core.helpers.SqlQueriesUtil">
+		<property name="xmlAbstractDAO" ref="service.XmlAbstractDAO"/>
+	</bean>
+	
 </beans>
