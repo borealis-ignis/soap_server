@@ -1,0 +1,14 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ent="http://soapserver.com/entities"
+	targetNamespace="http://soapserver.com/entities"
+	elementFormDefault="qualified">
+
+	<xs:element name="HotelsRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="test"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>

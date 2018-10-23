@@ -51,3 +51,5 @@ insert into `countries`(name, currency_id) values('Poland', @pln);
 SET @country = LAST_INSERT_ID();
 insert into `cities`(name, country_id, active) values('Warsaw', @country, 1);
 insert into `cities`(name, country_id, active) values('Krakow', @country, 1);
+
+insert into countries (name, currency_id) values ('Fake', 1);

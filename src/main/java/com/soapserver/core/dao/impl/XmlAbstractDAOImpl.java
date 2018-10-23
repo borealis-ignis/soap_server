@@ -41,7 +41,8 @@ public class XmlAbstractDAOImpl extends JdbcExt implements XmlAbstractDAO {
 				
 				for (final String columnName : columnsList) {
 					final Node columnElement = xmlDoc.createElement(columnName);
-					columnElement.appendChild(xmlDoc.createTextNode(rs.getObject(columnName).toString()));
+					final Object value = rs.getObject(columnName);
+					columnElement.appendChild(xmlDoc.createTextNode(((value == null)? "" : value.toString())));
 					entry.appendChild(columnElement);
 				}
 				

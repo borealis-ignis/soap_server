@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -15,6 +16,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.dom.DOMSource;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.w3c.dom.Document;
 
 import com.soapserver.core.dao.XmlAbstractDAO;
@@ -23,6 +27,8 @@ import com.soapserver.core.filters.PreFilter;
 import com.soapserver.core.processors.xslt.XslTransformer;
 
 public abstract class AbstractServiceProcessor <RQ, RS> {
+	
+	private final static ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 	
 	private XmlAbstractDAO abstractDAO;
 	
@@ -41,6 +47,7 @@ public abstract class AbstractServiceProcessor <RQ, RS> {
 	
 	
 	public RS process(final RQ request) throws JAXBException, IOException, TransformerException, ServiceException {
+		Session.initSession();
 		for (final PreFilter<RQ> preFilter : preFilters) {
 			if (preFilter.isApplicable(request)) {
 				preFilter.preProcess(request);
@@ -57,8 +64,13 @@ public abstract class AbstractServiceProcessor <RQ, RS> {
 		return response;
 	}
 	
-	private Object xslProcessing(final RQ request) throws JAXBException, IOException, TransformerException {
+	private Object xslProcessing(final RQ request) throws JAXBException, IOException, TransformerException, ServiceException {
 		final String sqlQuery = processRequest(request);
+		
+		final Session session = Session.getSession();
+		if (!session.isRequestOk()) {
+			throw new ServiceException(sqlQuery);
+		}
 		
 		final Document xmlDoc = getAbstractDAO().selectDataFromDB(sqlQuery);
 		
@@ -74,8 +86,9 @@ public abstract class AbstractServiceProcessor <RQ, RS> {
 		final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		final StreamResult result = new StreamResult(outStream);
 		
-		final XslTransformer transformer = new XslTransformer("com/soapserver/xslt/rq/" + xsl);
-		transformer.transform(xml, result);
+		final Resource xslResource = resolver.getResource("classpath:/com/soapserver/xslt/rq/" + xsl);
+		final XslTransformer transformer = new XslTransformer(xslResource.getURL());
+		transformer.transform(xml, result, Collections.<String, Object>emptyMap());
 		
 		return new String(outStream.toByteArray());
 	}
@@ -83,12 +96,14 @@ public abstract class AbstractServiceProcessor <RQ, RS> {
 	private Object createResponse(final Document xmlDoc) throws IOException, TransformerException, JAXBException {
 		final Source xml = new DOMSource(xmlDoc);
 		
-		final XslTransformer transformer = new XslTransformer("com/soapserver/xslt/rs/" + xsl);
+		
+		final Resource xslResource = resolver.getResource("classpath:/com/soapserver/xslt/rs/" + xsl);
+		final XslTransformer transformer = new XslTransformer(xslResource.getURL());
 		
 		final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		final StreamResult result = new StreamResult(outStream);
 		
-		transformer.transform(xml, result);
+		transformer.transform(xml, result, Collections.<String, Object>emptyMap());
 		
 		final Unmarshaller jaxbUnmarshaller = createUnmarshaller();
 		return jaxbUnmarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(outStream.toByteArray())));

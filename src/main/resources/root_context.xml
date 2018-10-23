@@ -38,4 +38,19 @@
 		</property>
 	</bean>
 	
+	<bean class="com.soapserver.core.processors.impl.HotelsProcessor">
+		<property name="xsl" value="hotels.xsl"/>
+		<property name="abstractDAO" ref="service.XmlAbstractDAO"/>
+		<property name="preFilters">
+			<list>
+				
+			</list>
+		</property>
+		<property name="postFilters">
+			<list>
+				
+			</list>
+		</property>
+	</bean>
+
 </beans>

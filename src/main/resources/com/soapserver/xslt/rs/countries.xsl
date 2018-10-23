@@ -3,7 +3,7 @@
 	xmlns:ent="http://soapserver.com/entities"
 	xmlns:sutil="http://xml.apache.org/xalan/java/com.soapserver.core.helpers.StringUtil"
 	xmlns:queryutil="http://xml.apache.org/xalan/java/com.soapserver.core.helpers.SqlQueriesUtil"
-	exclude-result-prefixes="ent">
+	exclude-result-prefixes="ent sutil queryutil">
 	
 	<xsl:output method="xml"/>
 	
